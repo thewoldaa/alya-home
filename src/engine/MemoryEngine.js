@@ -9,6 +9,15 @@
 const MEMORY_KEY = 'alya_memory_v2';
 const HISTORY_KEY = 'alya_chat_history_v2';
 
+// Node.js fallback for localStorage
+const storage = typeof localStorage !== 'undefined' ? localStorage : {
+  _data: {},
+  getItem(key) { return this._data[key] || null; },
+  setItem(key, val) { this._data[key] = String(val); },
+  removeItem(key) { delete this._data[key]; },
+  clear() { this._data = {}; }
+};
+
 export class MemoryEngine {
   constructor() {
     this.conversationHistory = [];
@@ -192,7 +201,7 @@ export class MemoryEngine {
 
   _loadMemory() {
     try {
-      const dataStr = localStorage.getItem(MEMORY_KEY);
+      const dataStr = storage.getItem(MEMORY_KEY);
       if (dataStr) {
         const data = JSON.parse(dataStr);
         this.userPreferences = data.userPreferences || {};
@@ -206,7 +215,7 @@ export class MemoryEngine {
 
   _saveMemory() {
     try {
-      localStorage.setItem(MEMORY_KEY, JSON.stringify({
+      storage.setItem(MEMORY_KEY, JSON.stringify({
         userPreferences: this.userPreferences,
         behaviorTracker: this.behaviorTracker,
         lastUpdated: new Date().toISOString()
@@ -216,7 +225,7 @@ export class MemoryEngine {
 
   _loadChatHistory() {
     try {
-      const dataStr = localStorage.getItem(HISTORY_KEY);
+      const dataStr = storage.getItem(HISTORY_KEY);
       if (dataStr) {
         const data = JSON.parse(dataStr);
         this.conversationHistory = data.conversations || [];
@@ -232,7 +241,7 @@ export class MemoryEngine {
 
   _saveChatHistory() {
     try {
-      localStorage.setItem(HISTORY_KEY, JSON.stringify({
+      storage.setItem(HISTORY_KEY, JSON.stringify({
         conversations: this.conversationHistory,
         lastUpdated: new Date().toISOString()
       }));
@@ -252,3 +261,4 @@ export class MemoryEngine {
     this._saveChatHistory();
   }
 }
+

@@ -1,5 +1,14 @@
 import { getStoredModelSelection, isChatModel } from './modelCatalog.js';
 
+// Node.js fallback for localStorage
+const storage = typeof localStorage !== 'undefined' ? localStorage : {
+  _data: {},
+  getItem(key) { return this._data[key] || null; },
+  setItem(key, val) { this._data[key] = String(val); },
+  removeItem(key) { delete this._data[key]; },
+  clear() { this._data = {}; }
+};
+
 export class GeminiEngine {
   constructor() {
     this.basePrompt = `Kamu adalah Alya, teman chat yang manis, rapi, hangat, sedikit manja, dan kadang tengil lucu.
@@ -31,12 +40,13 @@ Larangan Keras:
   }
 
   getApiKey() {
-    return localStorage.getItem('alya_gemini_api_key') || '';
+    return storage.getItem('alya_gemini_api_key') || '';
   }
 
   getPersonaMode() {
-    return localStorage.getItem('alya_persona_mode') || 'rapi';
+    return storage.getItem('alya_persona_mode') || 'rapi';
   }
+
 
   getSelectedModelInfo() {
     return getStoredModelSelection();

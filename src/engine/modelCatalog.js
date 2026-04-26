@@ -316,10 +316,19 @@ export function getModelByApiModel(apiModel) {
   return MODEL_CATALOG.find((item) => item.apiModel === apiModel) || null;
 }
 
+// Node.js fallback for localStorage
+const storage = typeof localStorage !== 'undefined' ? localStorage : {
+  _data: {},
+  getItem(key) { return this._data[key] || null; },
+  setItem(key, val) { this._data[key] = String(val); },
+  removeItem(key) { delete this._data[key]; },
+  clear() { this._data = {}; }
+};
+
 export function getStoredModelSelection() {
-  const customModelId = (localStorage.getItem('alya_custom_model_id') || '').trim();
-  const selectedKey = localStorage.getItem('alya_model_key') || DEFAULT_MODEL_KEY;
-  const legacyModel = localStorage.getItem('alya_gemini_model') || '';
+  const customModelId = (storage.getItem('alya_custom_model_id') || '').trim();
+  const selectedKey = storage.getItem('alya_model_key') || DEFAULT_MODEL_KEY;
+  const legacyModel = storage.getItem('alya_gemini_model') || '';
 
   if (customModelId) {
     return {
@@ -344,3 +353,4 @@ export function getStoredModelSelection() {
 export function isChatModel(model) {
   return !!model && model.mode === 'chat';
 }
+
