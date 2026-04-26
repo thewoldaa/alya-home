@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Alya Chatbot</title>
+  <meta name="description" content="Alya - chatbot personal dengan persona manis dan rapi">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0510;--bg2:#120a1f;--bg3:#1c112e;--bg-chat:#05030a;
+      --pink:#ff6b9d;--purple:#b44dff;--cyan:#00e5ff;--yellow:#ffe66d;
+      --text:#f0e8ff;--text2:#b0a0c8;--text3:#6b5b85;
+      --glass:rgba(18,10,31,0.85);--glass-b:rgba(255,107,157,0.2);
+      --user-bg:linear-gradient(135deg, #3d5afe, #536dfe);
+      --alya-bg:linear-gradient(135deg, #1c112e, #120a1f);
+      --glow:0 0 25px rgba(255,107,157,0.3);--r:20px;
+      --sidebar-width:280px;
+    }
+    body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden;background-image:radial-gradient(circle at 20% 30%, rgba(255, 107, 157, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(180, 77, 255, 0.05) 0%, transparent 50%);}
+    .sidebar{width:var(--sidebar-width);background:var(--bg2);border-right:1px solid var(--glass-b);display:flex;flex-direction:column;transition:transform .4s cubic-bezier(0.4, 0, 0.2, 1);z-index:20}
+    .sidebar-header{padding:20px;border-bottom:1px solid var(--glass-b);display:flex;justify-content:space-between;align-items:center}
+    .new-chat-btn{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;border-radius:24px;padding:10px 20px;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;justify-content:center;transition:all .2s;box-shadow:0 4px 15px rgba(255, 107, 157, 0.2)}
+    .new-chat-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255, 107, 157, 0.3)}
+    .new-chat-btn:active{transform:scale(.95)}
+    .session-list{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
+    .session-list::-webkit-scrollbar{width:4px}
+    .session-list::-webkit-scrollbar-thumb{background:var(--glass-b);border-radius:2px}
+    .session-item{background:var(--bg3);border:1px solid rgba(255,255,255,0.03);border-radius:14px;padding:12px 16px;font-size:14px;color:var(--text2);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .3s}
+    .session-item:hover{background:rgba(255,107,157,0.08);border-color:rgba(255,107,157,0.2)}
+    .session-item.active{border-color:var(--pink);color:#fff;background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(180,77,255,0.15));box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+    .session-title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+    .delete-session{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:6px;border-radius:6px;transition:all .2s}
+    .delete-session:hover{color:#ff5252;background:rgba(255,82,82,0.1)}
+    .sidebar-footer{padding:20px;border-top:1px solid var(--glass-b)}
+    .settings-btn{background:rgba(255,255,255,0.03);color:var(--text2);border:1px solid var(--glass-b);border-radius:24px;padding:10px;text-align:center;text-decoration:none;display:block;font-size:14px;font-weight:600;transition:all .3s}
+    .settings-btn:hover{border-color:var(--pink);color:var(--pink);background:rgba(255,107,157,0.05)}
+
+    .main-content{flex:1;display:flex;flex-direction:column;position:relative;width:calc(100% - var(--sidebar-width));background:var(--bg-chat)}
+    .header{background:var(--glass);backdrop-filter:blur(25px);border-bottom:1px solid var(--glass-b);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+    .header-left{display:flex;align-items:center;gap:15px}
+    .menu-toggle{display:none;background:rgba(255,255,255,0.05);border:1px solid var(--glass-b);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;padding:8px 12px;border-radius:12px;transition:all .2s}
+    .menu-toggle:hover{background:rgba(255,255,255,0.1)}
+    .avatar{width:46px;height:46px;border-radius:50%;overflow:hidden;box-shadow:var(--glow);border:2px solid var(--pink);transition:transform .3s}
+    .avatar:hover{transform:scale(1.05) rotate(5deg)}
+    .avatar img{width:100%;height:100%;object-fit:cover}
+    .header-info h1{font-size:20px;font-weight:900;letter-spacing:0.5px;background:linear-gradient(135deg,var(--pink),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .header-meta{display:flex;align-items:center;gap:10px;margin-top:2px}
+    .status{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px}
+    .status-dot{width:8px;height:8px;border-radius:50%;background:#00e676;box-shadow:0 0 10px #00e676;animation:blink 2s ease-in-out infinite}
+    .model-badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800;color:#fff;background:rgba(255,107,157,0.2);border:1px solid rgba(255,107,157,0.3);backdrop-filter:blur(5px)}
+    .model-badge.warn{color:#ffe66d;border-color:rgba(255,230,109,0.3);background:rgba(255,230,109,0.1)}
+    @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(0.8)}}
+
+    .chat-area{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}
+    .chat-area::-webkit-scrollbar{width:6px}
+    .chat-area::-webkit-scrollbar-thumb{background:rgba(255,107,157,0.15);border-radius:3px}
+    .message{display:flex;gap:12px;max-width:88%;animation:msgIn .4s cubic-bezier(0.18, 0.89, 0.32, 1.28)}
+    @keyframes msgIn{from{opacity:0;transform:translateY(20px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .message.user{align-self:flex-end;flex-direction:row-reverse}
+    .message.alya{align-self:flex-start}
+    .msg-avatar{width:34px;height:34px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid var(--pink);box-shadow:0 4px 10px rgba(0,0,0,0.2)}
+    .msg-avatar img{width:100%;height:100%;object-fit:cover}
+    .message.user .msg-avatar{background:var(--user-bg);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;border-color:rgba(255,255,255,0.2);color:#fff}
+    .message-content{padding:12px 18px;border-radius:var(--r);line-height:1.6;font-size:15px;position:relative;word-wrap:break-word;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+    .message.user .message-content{background:var(--user-bg);color:#fff;border-bottom-right-radius:4px}
+    .message.alya .message-content{background:var(--alya-bg);border:1px solid var(--glass-b);color:var(--text);border-bottom-left-radius:4px}
+    .message-content p{margin-bottom:10px}
+    .message-content p:last-child{margin-bottom:0}
+    .tts-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text3);border-radius:8px;padding:4px 8px;cursor:pointer;margin-top:8px;font-size:11px;font-weight:700;transition:all .2s;display:inline-flex;align-items:center;gap:4px}
+    .tts-btn:hover{color:var(--pink);background:rgba(255,107,157,0.1);border-color:var(--pink)}
+    .tts-btn.speaking{color:var(--pink);animation:pulse 1s infinite;border-color:var(--pink)}
+    .mic-btn{background:rgba(255,255,255,0.05);border:1px solid var(--glass-b);color:var(--text2);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;flex-shrink:0}
+    .mic-btn:hover{background:rgba(255,107,157,0.1);color:var(--pink);border-color:var(--pink)}
+    .mic-btn.recording{color:var(--pink);background:rgba(255,107,157,0.15);animation:pulse 1s infinite;border-color:var(--pink)}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255, 107, 157, 0.4)}70%{box-shadow:0 0 0 10px rgba(255, 107, 157, 0)}100%{box-shadow:0 0 0 0 rgba(255, 107, 157, 0)}}
+    .typing-cursor{display:inline-block;width:3px;height:15px;background:var(--pink);margin-left:4px;animation:blink 1s infinite;vertical-align:middle}
+    .typing-indicator{display:none;align-self:flex-start;padding:12px 18px;background:var(--alya-bg);border:1px solid var(--glass-b);border-radius:var(--r);border-bottom-left-radius:4px}
+    .typing-indicator.show{display:flex;gap:5px;animation:fadeIn .3s}
+    .typing-indicator span{width:8px;height:8px;border-radius:50%;background:var(--pink);animation:bounce 1.4s infinite ease-in-out;opacity:0.6}
+    .typing-indicator span:nth-child(2){animation-delay:.2s}
+    .typing-indicator span:nth-child(3){animation-delay:.4s}
+
+    .input-area{background:var(--glass);backdrop-filter:blur(30px);border-top:1px solid var(--glass-b);padding:15px 20px;display:flex;gap:12px;align-items:center;z-index:10}
+    .input-container{flex:1;position:relative;display:flex;align-items:center;background:var(--bg2);border:1px solid var(--glass-b);border-radius:28px;padding:2px 6px;transition:all .3s}
+    .input-container:focus-within{border-color:var(--pink);box-shadow:0 0 15px rgba(255, 107, 157, 0.1)}
+    #chat-input{flex:1;background:transparent;border:none;padding:12px 15px;color:var(--text);font-size:15px;font-family:inherit;outline:none}
+    #chat-input::placeholder{color:var(--text3);font-weight:500}
+    #send-btn{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;flex-shrink:0;box-shadow:0 4px 15px rgba(255, 107, 157, 0.3)}
+    #send-btn:hover{transform:rotate(10deg) scale(1.1);box-shadow:0 6px 20px rgba(255, 107, 157, 0.4)}
+    #send-btn:active{transform:scale(.9)}
+
+    .welcome{text-align:center;padding:30px 16px;animation:fadeIn .5s;margin:auto}
+    .welcome-img{width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 16px;box-shadow:0 0 30px rgba(255,107,157,0.3);border:3px solid var(--pink)}
+    .welcome-img img{width:100%;height:100%;object-fit:cover}
+    .welcome h2{font-size:20px;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,var(--pink),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .welcome p{color:var(--text2);font-size:13px;max-width:320px;margin:0 auto;line-height:1.5}
+
+    .overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:15;backdrop-filter:blur(2px)}
+    @media(max-width:768px){
+      .sidebar{position:fixed;height:100%;transform:translateX(-100%);box-shadow:5px 0 15px rgba(0,0,0,0.3)}
+      .sidebar.open{transform:translateX(0)}
+      .main-content{width:100%}
+      .menu-toggle{display:block}
+      .overlay.show{display:block}
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="new-chat-btn" onclick="createNewSession()">+ Chat Baru</button>
+    </div>
+    <div class="session-list" id="session-list"></div>
+    <div class="sidebar-footer">
+      <a href="settings.html" class="settings-btn">Settings & Memory</a>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <main class="main-content">
+    <header class="header">
+      <div class="header-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">Menu</button>
+        <div class="avatar"><img src="../data/images/alya-cute.png" alt="Alya"></div>
+        <div class="header-info">
+          <h1>Alya</h1>
+          <div class="header-meta">
+            <div class="status"><div class="status-dot"></div><span>Online dan siap nemenin.</span></div>
+            <div class="model-badge" id="model-badge">Model aktif</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="chat-area" id="chat-area">
+      <div class="welcome" id="welcome-screen">
+        <div class="welcome-img"><img src="../data/images/alya-happy.png" alt="Alya"></div>
+        <h2>Hai, Kakak.</h2>
+        <p>Alya di sini buat nemenin ngobrol. Pilih model yang pas, terus chat seperti biasa ya.</p>
+      </div>
+      <div class="typing-indicator" id="typing"><span></span><span></span><span></span></div>
+    </div>
+
+    <footer class="input-area">
+      <button id="mic-btn" class="mic-btn" title="Bicara">Mic</button>
+      <div class="input-container">
+        <input type="text" id="chat-input" placeholder="Ngobrol sama Alya..." autocomplete="off">
+      </div>
+      <button id="send-btn" title="Kirim">Kirim</button>
+    </footer>
+  </main>
+
+  <script type="module">
+    import { SessionManager } from '../engine/SessionManager.js';
+    import { GeminiEngine } from '../engine/GeminiEngine.js';
+    import { NotificationManager } from '../engine/NotificationManager.js';
+
+    // Global error handler to prevent WebView crash
+    window.onerror = function(msg, url, line, col, error) {
+      console.error('Global Error:', msg, url, line, col, error);
+      return true; // Prevent default handling
+    };
+    window.addEventListener('unhandledrejection', (e) => {
+      console.error('Unhandled Promise:', e.reason);
+      e.preventDefault();
+    });
+
+    let sessionManager, geminiEngine, notificationManager;
+    try {
+      sessionManager = new SessionManager();
+    } catch(e) {
+      console.error('SessionManager init failed:', e);
+      sessionManager = null;
+    }
+    try {
+      geminiEngine = new GeminiEngine();
+    } catch(e) {
+      console.error('GeminiEngine init failed:', e);
+      geminiEngine = null;
+    }
+    try {
+      notificationManager = new NotificationManager();
+    } catch(e) {
+      console.error('NotificationManager init failed:', e);
+      notificationManager = null;
+    }
+
+    // Intercept Android hardware back button - minimize app instead of crashing
+    try {
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+        window.Capacitor.Plugins.App.addListener('backButton', ({canGoBack}) => {
+          if (canGoBack) {
+            window.history.back();
+          } else {
+            // Minimize the app instead of closing/crashing
+            window.Capacitor.Plugins.App.minimizeApp();
+          }
+        });
+      }
+    } catch(e) {
+      console.warn('Capacitor App plugin not available:', e);
+    }
+
+    // Prevent browser back from going to index.html redirect loop
+    history.pushState(null, '', location.href);
+    window.addEventListener('popstate', () => {
+      history.pushState(null, '', location.href);
+    });
+
+    const chatArea = document.getElementById('chat-area');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const typing = document.getElementById('typing');
+    const welcomeScreen = document.getElementById('welcome-screen');
+    const sessionListEl = document.getElementById('session-list');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const modelBadge = document.getElementById('model-badge');
+    const micBtn = document.getElementById('mic-btn');
+
+    const ttsTextMap = new WeakMap();
+
+    window.toggleSidebar = function() {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    };
+
+    window.createNewSession = function() {
+      sessionManager.createNewSession();
+      renderSessionList();
+      loadCurrentSession();
+      if (window.innerWidth <= 768) toggleSidebar();
+    };
+
+    window.switchSession = function(id) {
+      sessionManager.switchSession(id);
+      renderSessionList();
+      loadCurrentSession();
+      if (window.innerWidth <= 768) toggleSidebar();
+    };
+
+    window.deleteSession = function(event, id) {
+      event.stopPropagation();
+      if (confirm('Hapus chat ini?')) {
+        sessionManager.deleteSession(id);
+        renderSessionList();
+        loadCurrentSession();
+      }
+    };
+
+    function refreshModelBadge() {
+      const modelInfo = geminiEngine.getSelectedModelInfo();
+      modelBadge.textContent = modelInfo?.label || 'Model aktif';
+      modelBadge.classList.toggle('warn', modelInfo?.mode !== 'chat');
+      modelBadge.title = modelInfo?.note || '';
+    }
+
+    function renderSessionList() {
+      sessionListEl.innerHTML = '';
+      sessionManager.sessions.forEach((session) => {
+        const div = document.createElement('div');
+        div.className = `session-item ${session.id === sessionManager.currentSessionId ? 'active' : ''}`;
+        div.onclick = () => switchSession(session.id);
+        div.innerHTML = `
+          <div class="session-title">${escapeHtml(session.title)}</div>
+          <button class="delete-session" onclick="deleteSession(event, '${session.id}')">Hapus</button>
+        `;
+        sessionListEl.appendChild(div);
+      });
+    }
+
+    function loadCurrentSession() {
+      Array.from(chatArea.children).forEach((child) => {
+        if (child !== welcomeScreen && child !== typing) {
+          child.remove();
+        }
+      });
+
+      const messages = sessionManager.getCurrentMessages();
+      if (messages.length === 0) {
+        welcomeScreen.style.display = 'block';
+      } else {
+        welcomeScreen.style.display = 'none';
+        messages.forEach((msg) => appendMessageUI(msg.role, msg.text));
+      }
+
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function appendMessageUI(role, text, isTypewriter = false) {
+      const div = document.createElement('div');
+      div.className = `message ${role}`;
+
+      const avatarHtml = role === 'user'
+        ? '<div class="msg-avatar">K</div>'
+        : '<div class="msg-avatar"><img src="../data/images/alya-cute.png" alt="Alya"></div>';
+
+      div.innerHTML = `${avatarHtml}<div><div class="message-content"></div></div>`;
+      const contentContainer = div.querySelector('.message-content');
+
+      chatArea.insertBefore(div, typing);
+      chatArea.scrollTop = chatArea.scrollHeight;
+
+      if (role === 'user') {
+        contentContainer.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
+        return;
+      }
+
+      if (isTypewriter) {
+        let index = 0;
+        contentContainer.innerHTML = '<span class="typing-cursor"></span>';
+        const interval = setInterval(() => {
+          if (index < text.length) {
+            contentContainer.textContent = `${text.substring(0, index + 1)}|`;
+            index += 2;
+            chatArea.scrollTop = chatArea.scrollHeight;
+          } else {
+            clearInterval(interval);
+            renderAlyaContent(contentContainer, text);
+          }
+        }, 15);
+        return;
+      }
+
+      renderAlyaContent(contentContainer, text);
+    }
+
+    function renderAlyaContent(container, rawText) {
+      let parsedHtml;
+      try {
+        parsedHtml = typeof marked !== 'undefined'
+          ? marked.parse(rawText)
+          : escapeHtml(rawText).replace(/\n/g, '<br>');
+      } catch (error) {
+        parsedHtml = escapeHtml(rawText).replace(/\n/g, '<br>');
+      }
+
+      container.innerHTML = parsedHtml;
+      const ttsBtn = document.createElement('button');
+      ttsBtn.className = 'tts-btn';
+      ttsBtn.title = 'Bacakan';
+      ttsBtn.textContent = 'Suara';
+      ttsTextMap.set(ttsBtn, rawText);
+      ttsBtn.addEventListener('click', function() {
+        speakText(this);
+      });
+      container.appendChild(ttsBtn);
+    }
+
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      const apiKey = geminiEngine.getApiKey();
+      if (!apiKey) {
+        alert('API key belum diatur. Buka Settings dulu ya.');
+        window.location.href = 'settings.html';
+        return;
+      }
+
+      chatInput.value = '';
+      welcomeScreen.style.display = 'none';
+
+      sessionManager.addMessage('user', text);
+      appendMessageUI('user', text);
+      renderSessionList();
+
+      typing.classList.add('show');
+      chatArea.scrollTop = chatArea.scrollHeight;
+
+      try {
+        const history = sessionManager.getCurrentMessages();
+        const responseText = await geminiEngine.generateResponse(history);
+        typing.classList.remove('show');
+        sessionManager.addMessage('alya', responseText);
+        appendMessageUI('alya', responseText, true);
+      } catch (error) {
+        typing.classList.remove('show');
+        const modelInfo = geminiEngine.getSelectedModelInfo();
+        const errText = error.message.startsWith('MODEL_MODE_')
+          ? `Mode ${modelInfo?.label || 'ini'} belum cocok buat chat biasa, Kakak. Ganti ke model chat dulu di Settings ya.`
+          : `Alya lagi kepentok error. Coba cek API key atau model di Settings ya. (${error.message})`;
+        console.error(error);
+        sessionManager.addMessage('alya', errText);
+        appendMessageUI('alya', errText, true);
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function speakText(btn) {
+      const text = ttsTextMap.get(btn);
+      if (!text) return;
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'id-ID';
+        utterance.pitch = 1.15;
+        utterance.rate = 1.0;
+        btn.classList.add('speaking');
+        utterance.onend = () => btn.classList.remove('speaking');
+        utterance.onerror = () => btn.classList.remove('speaking');
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert('Text-to-speech tidak didukung di perangkat ini.');
+      }
+    }
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'id-ID';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = function() {
+        micBtn.classList.add('recording');
+      };
+
+      recognition.onresult = function(event) {
+        chatInput.value = event.results[0][0].transcript;
+        micBtn.classList.remove('recording');
+        sendMessage();
+      };
+
+      recognition.onspeechend = function() {
+        recognition.stop();
+        micBtn.classList.remove('recording');
+      };
+
+      recognition.onerror = function(event) {
+        micBtn.classList.remove('recording');
+        console.error('Speech error', event.error);
+      };
+
+      micBtn.addEventListener('click', () => recognition.start());
+    } else {
+      micBtn.style.display = 'none';
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') sendMessage();
+    });
+
+    refreshModelBadge();
+    renderSessionList();
+    loadCurrentSession();
+    try {
+      if (notificationManager) notificationManager.scheduleRandomNotifications();
+    } catch(e) {
+      console.error('Notification scheduling failed:', e);
+    }
+  </script>
+</body>
+</html>

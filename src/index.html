@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alya Chatbot</title>
+  <script>
+    // Safe redirect that works in both browser and Capacitor WebView
+    // Use relative path from current location
+    try {
+      window.location.replace('./pages/chat.html');
+    } catch(e) {
+      window.location.href = './pages/chat.html';
+    }
+  </script>
+</head>
+<body>
+  <p style="text-align:center;padding:20px;font-family:sans-serif;color:#888">Loading Alya...</p>
+</body>
+</html>
