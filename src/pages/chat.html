@@ -20,10 +20,18 @@
       --cyan:#00e5ff;
       --text-main:#f8f4ff;
       --text-dim:#b0a4c8;
+      --text:#f8f4ff;
+      --text2:#c8bcd8;
+      --text3:#b0a4c8;
+      --bg2:#0c0616;
       --glass:rgba(12,6,22,0.7);
+      --glass-b:rgba(255,107,157,0.15);
       --border:rgba(255,107,157,0.15);
       --glow:0 0 20px rgba(255,107,157,0.25);
       --radius:22px;
+      --r:22px;
+      --alya-bg:#1a102b;
+      --danger:#ff5b5b;
     }
     body{
       font-family:'Nunito',sans-serif;
@@ -32,9 +40,15 @@
       height:100vh;
       display:flex;
       overflow:hidden;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(180, 77, 255, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(255, 107, 157, 0.08) 0%, transparent 40%);
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(180, 77, 255, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 107, 157, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.05) 0%, transparent 50%);
+      animation:bgPulse 8s ease-in-out infinite;
+    }
+    @keyframes bgPulse{
+      0%,100%{background-position:0% 0%,100% 100%,50% 50%}
+      50%{background-position:100% 100%,0% 0%,50% 50%}
     }
     
     .sidebar{
@@ -63,6 +77,9 @@
     .new-chat-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255, 107, 157, 0.4)}
     
     .session-list{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+    .session-search{background:rgba(255,255,255,0.03);border:1px solid var(--glass-b);border-radius:12px;padding:10px 14px;color:var(--text);font-size:13px;margin-bottom:8px;width:100%;outline:none}
+    .session-search:focus{border-color:var(--pink)}
+    .session-search::placeholder{color:var(--text3)}
     .session-item{
       background:rgba(255,255,255,0.02);
       border:1px solid transparent;
@@ -96,6 +113,7 @@
       z-index:50;
     }
     .header-left{display:flex;align-items:center;gap:16px}
+    .menu-toggle{display:none;background:transparent;border:none;color:var(--pink);font-size:24px;cursor:pointer;padding:8px}
     .avatar{
       width:52px;
       height:52px;
@@ -118,7 +136,11 @@
       font-weight:800;
       color:var(--pink);
       backdrop-filter:blur(10px);
+      cursor:pointer;
     }
+    .clear-chat-btn{background:transparent;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:8px;border-radius:8px;transition:.2s}
+    .clear-chat-btn:hover{color:var(--danger);background:rgba(255,91,91,0.1)}
+    .header-right{display:flex;align-items:center;gap:12px}
 
     .chat-area{
       flex:1;
@@ -165,6 +187,9 @@
       color:#fff;
       border-top-right-radius:4px;
     }
+    .message-time{font-size:10px;color:var(--text3);margin-top:6px;opacity:.7}
+    .message.user .message-time{text-align:right;margin-right:4px}
+    .message.alya .message-time{margin-left:4px}
     
     .input-area{
       background:var(--glass);
@@ -224,6 +249,12 @@
     .mic-btn{background:rgba(255,255,255,0.05);border:1px solid var(--glass-b);color:var(--text2);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;flex-shrink:0}
     .mic-btn:hover{background:rgba(255,107,157,0.1);color:var(--pink);border-color:var(--pink)}
     .mic-btn.recording{color:var(--pink);background:rgba(255,107,157,0.15);animation:pulse 1s infinite;border-color:var(--pink)}
+    .emoji-btn{background:rgba(255,255,255,0.05);border:1px solid var(--glass-b);color:var(--text2);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;flex-shrink:0;font-size:18px}
+    .emoji-btn:hover{background:rgba(255,107,157,0.1);color:var(--pink);border-color:var(--pink)}
+    .emoji-picker{position:fixed;bottom:80px;left:20px;background:rgba(26,16,40,.98);border:1px solid var(--glass-b);border-radius:16px;padding:12px;display:none;grid-template-columns:repeat(6,1fr);gap:8px;z-index:100;box-shadow:0 8px 30px rgba(0,0,0,.4);max-width:280px}
+    .emoji-picker.show{display:grid}
+    .emoji-picker button{background:transparent;border:none;font-size:22px;cursor:pointer;padding:6px;border-radius:8px;transition:.2s}
+    .emoji-picker button:hover{background:rgba(255,107,157,0.15);transform:scale(1.2)}
     @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255, 107, 157, 0.4)}70%{box-shadow:0 0 0 10px rgba(255, 107, 157, 0)}100%{box-shadow:0 0 0 0 rgba(255, 107, 157, 0)}}
     .typing-cursor{display:inline-block;width:3px;height:15px;background:var(--pink);margin-left:4px;animation:blink 1s infinite;vertical-align:middle}
     .typing-indicator{display:none;align-self:flex-start;padding:12px 18px;background:var(--alya-bg);border:1px solid var(--glass-b);border-radius:var(--r);border-bottom-left-radius:4px}
@@ -235,7 +266,7 @@
     .input-area{background:var(--glass);backdrop-filter:blur(30px);border-top:1px solid var(--glass-b);padding:15px 20px;display:flex;gap:12px;align-items:center;z-index:10}
     .input-container{flex:1;position:relative;display:flex;align-items:center;background:var(--bg2);border:1px solid var(--glass-b);border-radius:28px;padding:2px 6px;transition:all .3s}
     .input-container:focus-within{border-color:var(--pink);box-shadow:0 0 15px rgba(255, 107, 157, 0.1)}
-    #chat-input{flex:1;background:transparent;border:none;padding:12px 15px;color:var(--text);font-size:15px;font-family:inherit;outline:none}
+    #chat-input{flex:1;background:transparent;border:none;padding:12px 15px;color:var(--text);font-size:15px;font-family:inherit;outline:none;resize:none;overflow:hidden;min-height:20px;max-height:100px;line-height:1.4}
     #chat-input::placeholder{color:var(--text3);font-weight:500}
     #send-btn{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;flex-shrink:0;box-shadow:0 4px 15px rgba(255, 107, 157, 0.3)}
     #send-btn:hover{transform:rotate(10deg) scale(1.1);box-shadow:0 6px 20px rgba(255, 107, 157, 0.4)}
@@ -255,12 +286,21 @@
       .menu-toggle{display:block}
       .overlay.show{display:block}
     }
+    .offline-banner{display:none;position:fixed;top:44px;left:0;right:0;background:rgba(255,107,157,0.9);color:#fff;text-align:center;padding:8px;font-size:12px;font-weight:700;z-index:60;backdrop-filter:blur(10px)}
+    .offline-banner.show{display:block}
+    .toast-menu{display:none;position:fixed;background:rgba(26,16,40,.95);border:1px solid var(--glass-b);border-radius:12px;padding:8px;z-index:200;box-shadow:0 8px 25px rgba(0,0,0,0.4)}
+    .toast-menu.show{display:block}
+    .toast-menu button{display:block;width:100%;background:transparent;border:none;color:var(--text);padding:12px 20px;font-size:14px;text-align:left;cursor:pointer;border-radius:8px;font-family:inherit}
+    .toast-menu button:hover{background:rgba(255,107,157,0.1)}
+    .pull-indicator{position:absolute;top:-50px;left:50%;transform:translateX(-50%);color:var(--text2);font-size:12px;transition:.3s;opacity:0}
+    .pull-indicator.show{opacity:1;top:20px}
   </style>
 </head>
 <body>
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <button class="new-chat-btn" onclick="createNewSession()">+ Chat Baru</button>
+      <input type="text" class="session-search" id="session-search" placeholder="Cari chat...">
     </div>
     <div class="session-list" id="session-list"></div>
     <div class="sidebar-footer">
@@ -269,6 +309,9 @@
   </div>
 
   <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+  <div class="offline-banner" id="offline-banner">Tidak ada internet. Alya wait dulu ya.</div>
+  <div class="toast-menu" id="toast-menu"></div>
+  <div class="emoji-picker" id="emoji-picker"></div>
 
   <main class="main-content">
     <header class="header">
@@ -285,7 +328,10 @@
           </div>
         </div>
       </div>
-      <div class="model-badge" id="model-badge">Model aktif</div>
+      <div class="header-right">
+        <div class="model-badge" id="model-badge">Model aktif</div>
+        <button class="clear-chat-btn" id="clear-chat-btn" title="Hapus chat ini">🗑</button>
+      </div>
     </header>
 
     <div class="chat-area" id="chat-area">
@@ -301,6 +347,7 @@
 
     <footer class="input-area">
       <button id="mic-btn" class="mic-btn" title="Bicara">🎤</button>
+      <button id="emoji-btn" class="emoji-btn" title="Emoji">😊</button>
       <div class="input-container">
         <input type="text" id="chat-input" placeholder="Tulis pesan..." autocomplete="off">
       </div>
@@ -375,8 +422,26 @@
     const overlay = document.getElementById('overlay');
     const modelBadge = document.getElementById('model-badge');
     const micBtn = document.getElementById('mic-btn');
+    const emojiBtn = document.getElementById('emoji-btn');
+    const emojiPicker = document.getElementById('emoji-picker');
+    const offlineBanner = document.getElementById('offline-banner');
+    const toastMenu = document.getElementById('toast-menu');
+    const clearChatBtn = document.getElementById('clear-chat-btn');
 
     const ttsTextMap = new WeakMap();
+    
+    // Quick emoji picker
+    const quickEmojis = ['😊', '😂', '😍', '🥰', '😢', '😡', '🤔', '😴', '🤯', '🥳', '😎', '🤩', '✨', '🔥', '💕', '❤️', '😘', '💖', '🎉', '👍', '🙏', '💯'];
+    if (emojiPicker) {
+      emojiPicker.innerHTML = quickEmojis.map(e => `<button>${e}</button>`).join('');
+      emojiPicker.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          chatInput.value += btn.textContent;
+          chatInput.focus();
+          emojiPicker.classList.remove('show');
+        });
+      });
+    }
 
     window.toggleSidebar = function() {
       sidebar.classList.toggle('open');
@@ -414,14 +479,19 @@
     }
 
     function renderSessionList() {
+      const searchTerm = (document.getElementById('session-search')?.value || '').toLowerCase();
+      const filteredSessions = searchTerm 
+        ? sessionManager.sessions.filter(s => s.title.toLowerCase().includes(searchTerm))
+        : sessionManager.sessions;
+      
       sessionListEl.innerHTML = '';
-      sessionManager.sessions.forEach((session) => {
+      filteredSessions.forEach((session) => {
         const div = document.createElement('div');
         div.className = `session-item ${session.id === sessionManager.currentSessionId ? 'active' : ''}`;
         div.onclick = () => switchSession(session.id);
         div.innerHTML = `
           <div class="session-title">${escapeHtml(session.title)}</div>
-          <button class="delete-session" onclick="deleteSession(event, '${session.id}')">Hapus</button>
+          <button class="delete-session" onclick="deleteSession(event, '${session.id}')">🗑</button>
         `;
         sessionListEl.appendChild(div);
       });
@@ -445,15 +515,26 @@
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-    function appendMessageUI(role, text, isTypewriter = false) {
+    function formatMessageTime(isoDate) {
+      const date = new Date(isoDate);
+      const now = new Date();
+      const isToday = date.toDateString() === now.toDateString();
+      const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      if (isToday) return timeStr;
+      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) + ' ' + timeStr;
+    }
+
+    function appendMessageUI(role, text, isTypewriter = false, timestamp = null) {
+      const msgTime = timestamp || new Date().toISOString();
       const div = document.createElement('div');
       div.className = `message ${role}`;
+      div.setAttribute('data-time', msgTime);
 
       const avatarHtml = role === 'user'
         ? '<div class="msg-avatar">K</div>'
         : '<div class="msg-avatar"><img src="../data/images/alya-cute.png" alt="Alya"></div>';
 
-      div.innerHTML = `${avatarHtml}<div><div class="message-content"></div></div>`;
+      div.innerHTML = `${avatarHtml}<div><div class="message-content"></div><div class="message-time">${formatMessageTime(msgTime)}</div></div>`;
       const contentContainer = div.querySelector('.message-content');
 
       chatArea.insertBefore(div, typing);
@@ -602,12 +683,178 @@
     }
 
     sendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') sendMessage();
+    
+    // Auto-resize untuk Android (tidak perlu Enter)
+    chatInput.setAttribute('inputmode', 'text');
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
     });
+
+    // Mobile Features
+    // 1. Keep screen awake during chat
+    try {
+      if (navigator.wakeLock) {
+        let wakeLock = null;
+        const requestWakeLock = async () => {
+          try {
+            wakeLock = await navigator.wakeLock.request('screen');
+          } catch(e) {}
+        };
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible' && !wakeLock) requestWakeLock();
+        });
+        if (document.visibilityState === 'visible') requestWakeLock();
+      }
+    } catch(e) {}
+
+    // 2. Offline indicator
+    const updateOnlineStatus = () => {
+      if (offlineBanner) {
+        offlineBanner.classList.toggle('show', !navigator.onLine);
+      }
+    };
+    const updateOnlineStatus = () => {
+      offlineBanner.classList.toggle('show', !navigator.onLine);
+    };
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+
+    // 3. Haptic feedback on buttons
+    const haptic = (type = 'light') => {
+      try {
+        if (navigator.vibrate) {
+          navigator.vibrate(type === 'heavy' ? 30 : type === 'medium' ? 15 : 8);
+        }
+      } catch(e) {}
+    };
+    window.haptic = haptic;
+    sendBtn.addEventListener('click', () => haptic('medium'));
+    if (clearChatBtn) {
+      clearChatBtn.addEventListener('click', () => {
+        if (confirm('Hapus semua chat di sesi ini?')) {
+          sessionManager.clearCurrentSession();
+          loadCurrentSession();
+          window.haptic('medium');
+        }
+      });
+    }
+    micBtn.addEventListener('click', () => haptic('light'));
+    if (emojiBtn) {
+      emojiBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        emojiPicker.classList.toggle('show');
+        window.haptic('light');
+      });
+    }
+    document.addEventListener('click', (e) => {
+      if (emojiPicker && emojiPicker.classList.contains('show') && !emojiPicker.contains(e.target) && e.target !== emojiBtn) {
+        emojiPicker.classList.remove('show');
+      }
+    });
+    document.querySelectorAll('.new-chat-btn, .session-item, .menu-toggle').forEach(el => {
+      el.addEventListener('click', () => haptic('light'));
+    });
+
+    // 4. Pull-to-refresh simulation
+    let pullStartY = 0;
+    let pullStartTime = 0;
+    chatArea.addEventListener('touchstart', (e) => {
+      if (chatArea.scrollTop <= 0) {
+        pullStartY = e.touches[0].clientY;
+        pullStartTime = Date.now();
+      }
+    }, { passive: true });
+    chatArea.addEventListener('touchmove', (e) => {
+      if (pullStartY > 0 && chatArea.scrollTop <= 0) {
+        const deltaY = e.touches[0].clientY - pullStartY;
+        if (deltaY > 80 && Date.now() - pullStartTime > 500) {
+          haptic('medium');
+          pullStartY = 0;
+        }
+      }
+    }, { passive: true });
+    chatArea.addEventListener('touchend', () => { pullStartY = 0; }, { passive: true });
+
+    // 5. Long-press context menu on messages
+    const toastMenu = document.getElementById('toast-menu');
+    let longPressTimer = null;
+    let activeMessageEl = null;
+
+    const showToastMenu = (x, y, text) => {
+      const isUser = x > window.innerWidth / 2;
+      toastMenu.innerHTML = `
+        <button onclick="copyMessage('${escapeHtml(text).replace(/'/g, "\\'")}');toastMenu.classList.remove('show');window.haptic('light')">Salin</button>
+        ${!isUser ? `<button onclick="speakTextFromMenu('${escapeHtml(text).replace(/'/g, "\\'")}');toastMenu.classList.remove('show');window.haptic('light')">Bacakan</button>` : ''}
+      `;
+      toastMenu.style.left = Math.min(x, window.innerWidth - 100) + 'px';
+      toastMenu.style.top = Math.min(y, window.innerHeight - 120) + 'px';
+      toastMenu.classList.add('show');
+      haptic('medium');
+    };
+
+    const hideToastMenu = () => {
+      toastMenu.classList.remove('show');
+      activeMessageEl = null;
+    };
+
+    window.copyMessage = function(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Teks disalin!');
+      }).catch(() => {
+        alert('Gagal menyalin.');
+      });
+    };
+
+    window.speakTextFromMenu = function(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'id-ID';
+        utterance.pitch = 1.15;
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+    };
+
+    document.addEventListener('click', hideToastMenu);
+    document.addEventListener('touchstart', () => {
+      if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    });
+    document.addEventListener('contextmenu', (e) => {
+      const msgContent = e.target.closest('.message-content');
+      if (msgContent && longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+        e.preventDefault();
+        const text = msgContent.textContent.replace('Suara', '').trim();
+        showToastMenu(e.clientX, e.clientY, text);
+      }
+    });
+    chatArea.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        const msgEl = touch.target.closest('.message-content');
+        if (msgEl) {
+          longPressTimer = setTimeout(() => {
+            const text = msgEl.textContent.replace('Suara', '').trim();
+            showToastMenu(touch.clientX, touch.clientY, text);
+            longPressTimer = null;
+          }, 600);
+        }
+      }
+    }, { passive: true });
 
     refreshModelBadge();
     renderSessionList();
+    
+    // Session search filter
+    const sessionSearch = document.getElementById('session-search');
+    if (sessionSearch) {
+      sessionSearch.addEventListener('input', renderSessionList);
+    }
+    
     loadCurrentSession();
     try {
       if (notificationManager) notificationManager.scheduleRandomNotifications();

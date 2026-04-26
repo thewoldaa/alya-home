@@ -96,20 +96,41 @@ Larangan Keras (CRITICAL RULES):
     }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelInfo.apiModel}:generateContent?key=${apiKey}`;
-
+    
+    // Check if model supports thinking disabled (Gemma 2+, Gemini 2.0+)
+    const supportsThinking = modelInfo.apiModel.includes('gemma-2') || 
+                          modelInfo.apiModel.includes('gemini-2.0') ||
+                          modelInfo.apiModel.includes('gemini-2.5');
+    
+    const isGemma = modelInfo.family === 'Gemma' || modelInfo.apiModel.includes('gemma');
+    
+    // Build generationConfig - disable thinking for supported models
+    const generationConfig = {
+      temperature: 0.7,
+      topK: 40,
+      topP: 0.95,
+      maxOutputTokens: 300,
+      stopSequences: ["User:", "Persona:", "Key Rules:", "Option 1:", "Option 2:", "Think:", "Reasoning:", "Thought:", "\n\n"]
+    };
+    
+    // Disable thinking untuk Gemini 2.0+ dan Gemma 2+
+    if (supportsThinking) {
+      generationConfig.thinkingConfig = { thinkingBudget: 0 };
+    }
+    
     const payload = {
       system_instruction: {
         parts: [{ text: systemPrompt }]
       },
       contents: formattedMessages,
-      generationConfig: {
-        temperature: 0.7,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 300,
-        stopSequences: ["User:", "Persona:", "Key Rules:", "Option 1:", "Option 2:"]
-      }
+      generationConfig
     };
+
+    // For Gemma models, also add safety settings to reduce reasoning
+    if (isGemma) {
+      payload.system_instruction.parts[0].text = 
+        systemPrompt + "\n\nIMPORTANT: Jawab langsung tanpa berpikir. Jangan输出 proses berpikir.";
+    }
 
 
     try {
@@ -128,8 +149,33 @@ Larangan Keras (CRITICAL RULES):
       }
 
       const data = await response.json();
-      if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-        return data.candidates[0].content.parts[0].text;
+      let responseText = '';
+      
+      // Check for thinking/reasoning content in response
+      if (data?.candidates?.[0]?.content?.parts) {
+        // Find main text part (skip thinking part if present)
+        for (const part of data.candidates[0].content.parts) {
+          if (part.think) {
+            console.log('Skipping thinking content');
+            continue;
+          }
+          if (part.text) {
+            responseText = part.text;
+            break;
+          }
+        }
+      }
+      
+      if (responseText) {
+        // Clean response from thinking/reasoning patterns
+        responseText = responseText
+          .replace(/<think>[\s\S]*?<\/think>/gi, '')
+          .replace(/\n\s* думаю\n[\s\S]*?(?=\n\n|$)/gi, '')
+          .replace(/\n\s* Reasoning:\n[\s\S]*?(?=\n\n|$)/gi, '')
+          .replace(/\n\s* Think[\s\S]*?(?=\n\n|$)/gi, '')
+          .trim();
+        
+        return responseText;
       }
 
       console.warn('Gemini response structure unexpected:', JSON.stringify(data).substring(0, 200));
