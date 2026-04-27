@@ -132,19 +132,20 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    // ═══ STATIC IMAGES ═══
-    if (req.method === 'GET' && path.startsWith('/images/')) {
-      const filename = path.replace('/images/', '');
-      const filePath = join(IMAGES_DIR, filename);
-      if (existsSync(filePath)) {
-        const ext = extname(filename).toLowerCase();
+    // ═══ GENERIC STATIC FILES (src & root fallback) ═══
+    if (req.method === 'GET' && path.includes('.')) {
+      const relPath = path.startsWith('/') ? path.slice(1) : path;
+      const filePathSrc = join(__dirname, relPath);
+      const filePathRoot = join(__dirname, '..', relPath);
+      const filePath = existsSync(filePathSrc) ? filePathSrc : (existsSync(filePathRoot) ? filePathRoot : null);
+
+      if (filePath) {
+        const ext = extname(filePath).toLowerCase();
         const mime = MIME[ext] || 'application/octet-stream';
         res.writeHead(200, { 'Content-Type': mime, 'Cache-Control': 'public, max-age=86400' });
         res.end(readFileSync(filePath));
-      } else {
-        res.writeHead(404); res.end('Not found');
+        return;
       }
-      return;
     }
 
     // ═══ CHAT API ═══
@@ -264,7 +265,7 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    // 404
+    // 404 handled above if file exists, otherwise:
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Not found' }));
 

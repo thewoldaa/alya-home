@@ -126,7 +126,7 @@
     <header class="header">
       <div class="header-left">
         <button class="menu-toggle" onclick="toggleSidebar()">Menu</button>
-        <div class="avatar"><img src="../data/images/alya-cute.png" alt="Alya"></div>
+        <div class="avatar"><img src="/data/images/alya-cute.png" alt="Alya"></div>
         <div class="header-info">
           <h1>Alya</h1>
           <div class="header-meta">
@@ -139,7 +139,7 @@
 
     <div class="chat-area" id="chat-area">
       <div class="welcome" id="welcome-screen">
-        <div class="welcome-img"><img src="../data/images/alya-happy.png" alt="Alya"></div>
+        <div class="welcome-img"><img src="/data/images/alya-happy.png" alt="Alya"></div>
         <h2>Hai, Kakak.</h2>
         <p>Alya di sini buat nemenin ngobrol. Pilih model yang pas, terus chat seperti biasa ya.</p>
       </div>
@@ -160,10 +160,10 @@
   </main>
 
   <script type="module">
-    import { SessionManager } from '../engine/SessionManager.js';
-    import { GeminiEngine } from '../engine/GeminiEngine.js';
-    import { NotificationManager } from '../engine/NotificationManager.js';
-    import { PushNotificationManager } from '../engine/PushNotificationManager.js';
+    import { SessionManager } from '/engine/SessionManager.js';
+    import { GeminiEngine } from '/engine/GeminiEngine.js';
+    import { NotificationManager } from '/engine/NotificationManager.js';
+    import { PushNotificationManager } from '/engine/PushNotificationManager.js';
 
     // Global error handler to prevent WebView crash
     window.onerror = function(msg, url, line, col, error) {
@@ -315,7 +315,7 @@
 
       const avatarHtml = role === 'user'
         ? '<div class="msg-avatar">K</div>'
-        : '<div class="msg-avatar"><img src="../data/images/alya-cute.png" alt="Alya"></div>';
+        : '<div class="msg-avatar"><img src="/data/images/alya-cute.png" alt="Alya"></div>';
 
       div.innerHTML = `${avatarHtml}<div><div class="message-content"></div></div>`;
       const contentContainer = div.querySelector('.message-content');
