@@ -1,0 +1,107 @@
+{
+  "conversations": [
+    {
+      "role": "user",
+      "message": "hai alya!",
+      "metadata": {
+        "intent": "sapaan",
+        "entities": {},
+        "confidence": 0.9
+      },
+      "timestamp": 1777035247535
+    },
+    {
+      "role": "alya",
+      "message": "malam! Alya belum ngantuk! masih mau main! 😆 *pew pew!*",
+      "metadata": {
+        "mood": "senang",
+        "intent": "sapaan"
+      },
+      "timestamp": 1777035247537
+    },
+    {
+      "role": "user",
+      "message": "hai alya",
+      "metadata": {
+        "intent": "sapaan",
+        "entities": {},
+        "confidence": 0.9
+      },
+      "timestamp": 1777035404841
+    },
+    {
+      "role": "alya",
+      "message": "malam malam~ hehe Alya masih seger kok! ga usah suruh tidur ya! 😤",
+      "metadata": {
+        "mood": "senang",
+        "intent": "sapaan"
+      },
+      "timestamp": 1777035404843
+    },
+    {
+      "role": "user",
+      "message": "alya makan sayur dong!",
+      "metadata": {
+        "intent": "ajakan_makan_sayur",
+        "entities": {
+          "aktivitas": [
+            "makan"
+          ],
+          "makanan": [
+            "sayuran"
+          ]
+        },
+        "confidence": 1
+      },
+      "timestamp": 1777035616373
+    },
+    {
+      "role": "alya",
+      "message": "Alya punya superhero yang musuhnya sayur! jadi Alya ga boleh makan sayur! 😤",
+      "metadata": {
+        "mood": "kesel",
+        "intent": "ajakan_makan_sayur"
+      },
+      "timestamp": 1777035616375
+    },
+    {
+      "role": "user",
+      "message": "hai alya",
+      "metadata": {
+        "intent": "sapaan",
+        "entities": {},
+        "confidence": 0.9
+      },
+      "timestamp": 1777035893761
+    },
+    {
+      "role": "alya",
+      "message": "malam! Alya belum ngantuk! masih mau main! 😆",
+      "metadata": {
+        "mood": "kesel",
+        "intent": "sapaan"
+      },
+      "timestamp": 1777035893762
+    },
+    {
+      "role": "user",
+      "message": "hai siapa ini",
+      "metadata": {
+        "intent": "tanya_umum",
+        "entities": {},
+        "confidence": 1
+      },
+      "timestamp": 1777035911424
+    },
+    {
+      "role": "alya",
+      "message": "itu apaan? Alya beneran ga tau! jelasin dong! tapi yang gampang ya! 🥺 *pew pew!*",
+      "metadata": {
+        "mood": "penasaran",
+        "intent": "tanya_umum"
+      },
+      "timestamp": 1777035911425
+    }
+  ],
+  "lastUpdated": "2026-04-24T13:05:11.425Z"
+}

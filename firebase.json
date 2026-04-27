@@ -1,0 +1,16 @@
+{
+  "hosting": {
+    "public": "web-admin",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/rahasia",
+        "destination": "/admin-alya-push-99.html"
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "rules": [],
+  "templates": {
+    "json_example": {
+      "rules": [
+        {
+          "name": "contoh_rule",
+          "keywords": ["kata_kunci_1", "kata_kunci_2"],
+          "patterns": ["pola regex opsional"],
+          "responses": ["balasan variasi 1", "balasan variasi 2 😆"],
+          "priority": 5
+        }
+      ]
+    },
+    "md_format": "## nama_rule\n- **keywords**: kata1, kata2, kata3\n- **patterns**: regex1, regex2\n- **responses**:\n  - balasan 1\n  - balasan 2\n- **priority**: 5"
+  },
+  "lastUpdated": null
+}

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Alya Chatbot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0f0a1a;--bg2:#1a1028;--bg3:#231535;--pink:#ff6b9d;--purple:#b44dff;--cyan:#00e5ff;
+      --text:#f0e8ff;--text2:#b0a0c8;--text3:#706088;--glass-b:rgba(255,107,157,0.15);
+      --danger:#ff5b5b;--success:#2ee6a6;--warn:#ffd166;--r:14px;
+    }
+    body{font-family:'Nunito',sans-serif;background:radial-gradient(circle at top,#221137 0%,#130b1f 45%,#0b0713 100%);color:var(--text);min-height:100vh}
+    .topbar{position:sticky;top:0;z-index:10;background:rgba(15,10,26,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--glass-b);padding:14px 24px;display:flex;align-items:center;gap:14px}
+    .topbar a{color:var(--pink);text-decoration:none;font-size:14px}
+    .topbar h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--pink),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .container{max-width:920px;margin:0 auto;padding:22px}
+    .hero{padding:20px 0 14px}
+    .hero h2{font-size:26px;font-weight:800;margin-bottom:8px}
+    .hero p{font-size:14px;color:var(--text2);line-height:1.6;max-width:700px}
+    .tabs{display:flex;gap:8px;margin:18px 0 22px;flex-wrap:wrap}
+    .tab{background:rgba(35,21,53,.9);border:1px solid var(--glass-b);border-radius:999px;padding:10px 16px;font-size:13px;color:var(--text2);cursor:pointer;transition:.2s;font-family:'Nunito',sans-serif}
+    .tab.active,.tab:hover{border-color:var(--pink);color:var(--pink)}
+    .panel{display:none}
+    .panel.active{display:block}
+    .card{background:rgba(26,16,40,.9);border:1px solid var(--glass-b);border-radius:var(--r);padding:20px;margin-bottom:16px;box-shadow:0 12px 30px rgba(0,0,0,.22)}
+    .card h3{font-size:17px;font-weight:800;color:var(--pink);margin-bottom:10px}
+    .card p{font-size:13px;color:var(--text2);line-height:1.6}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .form-row{margin-top:14px}
+    label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px;font-weight:700}
+    input[type=text],input[type=password],input[type=number],select,textarea{width:100%;background:var(--bg3);border:1px solid var(--glass-b);border-radius:10px;padding:11px 13px;color:var(--text);font-size:13px;font-family:'Nunito',sans-serif;outline:none;transition:border .2s}
+    textarea{min-height:116px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:var(--pink)}
+    select option{background:var(--bg3);color:var(--text)}
+    .help-text{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5}
+    .btn-group{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:800;cursor:pointer;border:none;transition:.2s;font-family:'Nunito',sans-serif}
+    .btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff}
+    .btn-primary:hover{transform:translateY(-1px)}
+    .btn-secondary{background:var(--bg3);border:1px solid var(--glass-b);color:var(--text2)}
+    .btn-secondary:hover{border-color:var(--pink);color:var(--pink)}
+    .btn-danger{background:rgba(255,91,91,.12);border:1px solid rgba(255,91,91,.28);color:var(--danger)}
+    .meta-box{margin-top:12px;padding:12px 14px;border-radius:12px;background:rgba(35,21,53,.85);border:1px solid var(--glass-b)}
+    .meta-box strong{display:block;font-size:13px;margin-bottom:6px}
+    .meta-box p{font-size:12px;color:var(--text2)}
+    .meta-box.warn{border-color:rgba(255,209,102,.28)}
+    .meta-box.warn strong{color:var(--warn)}
+    .toast{position:fixed;right:18px;bottom:18px;max-width:320px;background:rgba(26,16,40,.96);border:1px solid var(--glass-b);border-radius:14px;padding:12px 16px;font-size:13px;transform:translateY(110px);opacity:0;transition:.25s;z-index:100}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.success{border-color:rgba(46,230,166,.4);color:var(--success)}
+    .toast.error{border-color:rgba(255,91,91,.4);color:var(--danger)}
+    .toast.warn{border-color:rgba(255,209,102,.35);color:var(--warn)}
+    .hide{display:none}
+    @media(max-width:768px){.container{padding:16px}.grid{grid-template-columns:1fr}.hero h2{font-size:22px}}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="javascript:void(0)" onclick="goBackToChat()">← Kembali ke chat</a>
+    <h1>Settings Alya</h1>
+  </div>
+
+  <div class="container">
+    <section class="hero">
+      <h2>Atur Alya biar lebih rapi, lembut, dan hidup.</h2>
+      <p>Di sini kamu bisa pilih model AI, nyalakan mode persona Alya, bikin model custom, dan atur notifikasi supaya rasanya lebih personal.</p>
+    </section>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('ai')">AI & Persona</button>
+      <button class="tab" onclick="showTab('notify')">Notifikasi</button>
+      <button class="tab" onclick="showTab('data')">Data & Memory</button>
+    </div>
+
+    <div class="panel active" id="panel-ai">
+      <div class="card">
+        <h3>API dan model</h3>
+        <p>Alya sekarang bisa pakai beberapa mode model. Untuk chat biasa, pilih mode chat. Untuk embedding atau live, Alya akan kasih tanda bahwa mode itu belum dipakai di layar chat ini.</p>
+
+        <div class="form-row">
+          <label>Gemini API Key</label>
+          <input type="password" id="api-key" placeholder="Tempel API key di sini">
+          <div class="help-text">API key disimpan lokal di perangkat ini.</div>
+        </div>
+
+        <div class="grid">
+          <div class="form-row">
+            <label>Preset model</label>
+            <select id="model-select"></select>
+            <div class="help-text">Daftar preset sudah ditambah sesuai model yang kamu minta.</div>
+          </div>
+          <div class="form-row">
+            <label>Mode persona Alya</label>
+            <select id="persona-select">
+              <option value="rapi">Alya Rapi</option>
+              <option value="manja">Alya Manja</option>
+              <option value="aktif">Alya Aktif</option>
+            </select>
+            <div class="help-text">Mode ini mengatur ritme bicara dan ekspresi Alya.</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Custom model ID</label>
+          <input type="text" id="custom-model" placeholder="Contoh: gemini-2.5-pro atau model lain">
+          <div class="help-text">Kalau diisi, custom model akan diprioritaskan dibanding preset.</div>
+        </div>
+
+        <div class="meta-box" id="model-meta"></div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="saveAISettings()">Simpan AI</button>
+          <button class="btn btn-secondary" onclick="clearCustomModel()">Reset custom model</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-notify">
+      <div class="card">
+        <h3>Notifikasi custom Alya</h3>
+        <p>Notifikasi sekarang bisa diatur lebih detail: judul sendiri, isi sendiri, jumlah per hari, jam aktif, dan tes notifikasi langsung.</p>
+
+        <div class="grid">
+          <div class="form-row">
+            <label>Izinkan notifikasi</label>
+            <select id="notif-select">
+              <option value="true">Aktif</option>
+              <option value="false">Mati</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Judul notifikasi</label>
+            <input type="text" id="notif-title" placeholder="Alya">
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="form-row">
+            <label>Jumlah per hari</label>
+            <select id="notif-count">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Jam aktif</label>
+            <div class="grid">
+              <div>
+                <input type="number" id="notif-start" min="0" max="23" placeholder="8">
+                <div class="help-text">Mulai</div>
+              </div>
+              <div>
+                <input type="number" id="notif-end" min="1" max="23" placeholder="22">
+                <div class="help-text">Sampai</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Pesan custom</label>
+          <textarea id="notif-body" placeholder="Satu baris satu pesan. Contoh:
+Alya kangen, Kakak.
+Hari ini jangan capek-capek ya.
+Kalau sempat, cerita ke Alya bentar."></textarea>
+          <div class="help-text">Kalau kosong, Alya pakai pesan bawaan. Kalau diisi banyak baris, Alya akan mengacak dari daftar ini.</div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="saveNotificationSettings()">Simpan notifikasi</button>
+          <button class="btn btn-secondary" onclick="sendTestNotification()">Tes notifikasi</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-data">
+      <div class="card">
+        <h3>Backup memory</h3>
+        <p>Kamu bisa export memory percakapan untuk pindah perangkat atau simpan cadangan.</p>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="exportData()">Export memory</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Restore memory</h3>
+        <p>Import file backup agar sesi chat lama kembali.</p>
+        <input type="file" id="import-file" class="hide" accept=".json" onchange="importData(event)">
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">Import memory</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Hapus semua data</h3>
+        <p style="color:var(--danger)">Ini akan menghapus semua sesi dan isi chat yang tersimpan di perangkat ini.</p>
+        <div class="btn-group">
+          <button class="btn btn-danger" onclick="clearAllData()">Clear all data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { NotificationManager } from '../engine/NotificationManager.js';
+    import { MODEL_CATALOG, DEFAULT_MODEL_KEY, getModelByKey } from '../engine/modelCatalog.js';
+
+    let notificationManager;
+    try {
+      notificationManager = new NotificationManager();
+    } catch(e) {
+      console.error('NotificationManager init failed:', e);
+      notificationManager = null;
+    }
+
+    // Safe back navigation - prevents redirect loop through index.html
+    window.goBackToChat = function() {
+      window.location.href = 'chat.html';
+    };
+
+    // Intercept Android hardware back button via Capacitor
+    try {
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+        window.Capacitor.Plugins.App.addListener('backButton', () => {
+          window.location.href = 'chat.html';
+        });
+      }
+    } catch(e) {
+      console.warn('Capacitor App plugin not available:', e);
+    }
+
+    // Fallback: intercept browser back to prevent going to index.html redirect loop
+    window.addEventListener('popstate', (e) => {
+      e.preventDefault();
+      window.location.href = 'chat.html';
+    });
+    // Push a fake state so popstate fires instead of actually going back
+    history.pushState(null, '', location.href);
+
+    function toast(message, type = 'success') {
+      const element = document.getElementById('toast');
+      element.textContent = message;
+      element.className = `toast show ${type}`;
+      setTimeout(() => element.classList.remove('show'), 3200);
+    }
+
+    function showTab(name) {
+      document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+      document.querySelector(`.tab[onclick="showTab('${name}')"]`).classList.add('active');
+      document.querySelectorAll('.panel').forEach((panel) => panel.classList.remove('active'));
+      document.getElementById(`panel-${name}`).classList.add('active');
+    }
+
+    function buildModelOptions() {
+      const select = document.getElementById('model-select');
+      select.innerHTML = MODEL_CATALOG.map((model) => `<option value="${model.key}">${model.label}</option>`).join('');
+    }
+
+    function updateModelMeta() {
+      const selected = getModelByKey(document.getElementById('model-select').value) || getModelByKey(DEFAULT_MODEL_KEY);
+      const hasCustom = document.getElementById('custom-model').value.trim().length > 0;
+      const meta = document.getElementById('model-meta');
+      const isWarn = selected.mode !== 'chat' || hasCustom;
+
+      meta.className = `meta-box${isWarn ? ' warn' : ''}`;
+      meta.innerHTML = `
+        <strong>${hasCustom ? 'Custom model aktif' : `${selected.label} (${selected.family})`}</strong>
+        <p>${hasCustom ? 'Alya akan memakai model custom yang kamu isi. Pastikan model itu mendukung generateContent untuk chat.' : selected.note}</p>
+        <p style="margin-top:6px">Mode: ${hasCustom ? 'custom' : selected.mode} | API model: ${hasCustom ? escapeHtml(document.getElementById('custom-model').value.trim()) : selected.apiModel}</p>
+      `;
+    }
+
+    function loadValues() {
+      const apiKey = localStorage.getItem('alya_gemini_api_key') || '';
+      const modelKey = localStorage.getItem('alya_model_key') || DEFAULT_MODEL_KEY;
+      const legacyModel = localStorage.getItem('alya_gemini_model') || '';
+      const persona = localStorage.getItem('alya_persona_mode') || 'rapi';
+
+      document.getElementById('api-key').value = apiKey;
+      document.getElementById('persona-select').value = persona;
+
+      if (getModelByKey(modelKey)) {
+        document.getElementById('model-select').value = modelKey;
+      } else {
+        const legacyMatch = MODEL_CATALOG.find((model) => model.apiModel === legacyModel);
+        document.getElementById('model-select').value = legacyMatch?.key || DEFAULT_MODEL_KEY;
+      }
+
+      document.getElementById('custom-model').value = localStorage.getItem('alya_custom_model_id') || '';
+      document.getElementById('notif-select').value = localStorage.getItem('alya_notifications_enabled') || 'true';
+      document.getElementById('notif-title').value = localStorage.getItem('alya_notification_title') || 'Alya';
+      document.getElementById('notif-count').value = localStorage.getItem('alya_notification_count') || '3';
+      document.getElementById('notif-start').value = localStorage.getItem('alya_notification_start_hour') || '8';
+      document.getElementById('notif-end').value = localStorage.getItem('alya_notification_end_hour') || '22';
+      document.getElementById('notif-body').value = localStorage.getItem('alya_notification_body') || '';
+
+      updateModelMeta();
+    }
+
+    async function saveAISettings() {
+      const apiKey = document.getElementById('api-key').value.trim();
+      const modelKey = document.getElementById('model-select').value;
+      const customModel = document.getElementById('custom-model').value.trim();
+      const persona = document.getElementById('persona-select').value;
+      const selected = getModelByKey(modelKey);
+
+      if (!apiKey) {
+        toast('API key masih kosong.', 'error');
+        return;
+      }
+
+      localStorage.setItem('alya_gemini_api_key', apiKey);
+      localStorage.setItem('alya_model_key', modelKey);
+      localStorage.setItem('alya_gemini_model', customModel || selected.apiModel);
+      localStorage.setItem('alya_persona_mode', persona);
+
+      if (customModel) {
+        localStorage.setItem('alya_custom_model_id', customModel);
+      } else {
+        localStorage.removeItem('alya_custom_model_id');
+      }
+
+      updateModelMeta();
+      toast('Pengaturan AI disimpan.');
+    }
+
+    function clearCustomModel() {
+      document.getElementById('custom-model').value = '';
+      localStorage.removeItem('alya_custom_model_id');
+      updateModelMeta();
+      toast('Custom model dibersihkan.');
+    }
+
+    async function saveNotificationSettings() {
+      const enabled = document.getElementById('notif-select').value;
+      const title = document.getElementById('notif-title').value.trim() || 'Alya';
+      const count = document.getElementById('notif-count').value;
+      const start = Number(document.getElementById('notif-start').value || 8);
+      const end = Number(document.getElementById('notif-end').value || 22);
+      const body = document.getElementById('notif-body').value.trim();
+
+      if (end <= start) {
+        toast('Jam akhir harus lebih besar dari jam mulai.', 'error');
+        return;
+      }
+
+      localStorage.setItem('alya_notifications_enabled', enabled);
+      localStorage.setItem('alya_notification_title', title);
+      localStorage.setItem('alya_notification_count', count);
+      localStorage.setItem('alya_notification_start_hour', String(start));
+      localStorage.setItem('alya_notification_end_hour', String(end));
+      localStorage.setItem('alya_notification_body', body);
+
+      if (notificationManager) await notificationManager.scheduleRandomNotifications();
+      toast(enabled === 'true' ? 'Notifikasi Alya diperbarui.' : 'Notifikasi Alya dimatikan.', enabled === 'true' ? 'success' : 'warn');
+    }
+
+    async function sendTestNotification() {
+      const enabled = document.getElementById('notif-select').value;
+      if (enabled !== 'true') {
+        toast('Aktifkan notifikasi dulu sebelum tes.', 'warn');
+        return;
+      }
+
+      await saveNotificationSettings();
+      const ok = notificationManager ? await notificationManager.testNotification() : false;
+      toast(ok ? 'Tes notifikasi dikirim. Tunggu sekitar 4 detik.' : 'Tes notifikasi gagal atau plugin belum tersedia.', ok ? 'success' : 'error');
+    }
+
+    async function exportData() {
+      try {
+        const sessionsRaw = localStorage.getItem('alya_sessions') || '[]';
+        const messagesRaw = localStorage.getItem('alya_messages') || '{}';
+
+        const backupData = {
+          version: '3.0',
+          timestamp: new Date().toISOString(),
+          sessions: JSON.parse(sessionsRaw),
+          messages: JSON.parse(messagesRaw)
+        };
+
+        const jsonStr = JSON.stringify(backupData, null, 2);
+        const fileName = `Alya_Memory_${Date.now()}.json`;
+
+        if (window.Capacitor?.Plugins?.Filesystem) {
+          try {
+            await window.Capacitor.Plugins.Filesystem.writeFile({
+              path: fileName,
+              data: jsonStr,
+              directory: 'DOCUMENTS',
+              encoding: 'utf8'
+            });
+            toast(`Backup tersimpan di Documents/${fileName}`);
+            return;
+          } catch (error) {
+            console.warn('Filesystem write failed, fallback to share/download', error);
+          }
+        }
+
+        if (navigator.canShare) {
+          try {
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const file = new File([blob], fileName, { type: 'application/json' });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({ title: 'Alya Memory Backup', files: [file] });
+              toast('Backup berhasil dibagikan.');
+              return;
+            }
+          } catch (error) {
+            console.warn('File share failed', error);
+          }
+        }
+
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          link.remove();
+          URL.revokeObjectURL(url);
+        }, 100);
+        toast('Backup sedang diunduh.');
+      } catch (error) {
+        toast(`Gagal export data: ${error.message}`, 'error');
+      }
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(readEvent) {
+        try {
+          const data = JSON.parse(readEvent.target.result);
+          if (data.sessions && data.messages) {
+            localStorage.setItem('alya_sessions', JSON.stringify(data.sessions));
+            localStorage.setItem('alya_messages', JSON.stringify(data.messages));
+            toast('Memory berhasil direstore.');
+          } else {
+            toast('Format file tidak valid.', 'error');
+          }
+        } catch (error) {
+          toast('Gagal membaca file backup.', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function clearAllData() {
+      if (confirm('Yakin mau hapus semua memory Alya di perangkat ini?')) {
+        localStorage.removeItem('alya_sessions');
+        localStorage.removeItem('alya_messages');
+        toast('Semua memory sudah dihapus.');
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    document.getElementById('model-select').addEventListener('change', updateModelMeta);
+    document.getElementById('custom-model').addEventListener('input', updateModelMeta);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        buildModelOptions();
+        loadValues();
+      } catch(e) {
+        console.error('Settings init error:', e);
+      }
+    });
+
+    window.showTab = showTab;
+    window.saveAISettings = saveAISettings;
+    window.clearCustomModel = clearCustomModel;
+    window.saveNotificationSettings = saveNotificationSettings;
+    window.sendTestNotification = sendTestNotification;
+    window.exportData = exportData;
+    window.importData = importData;
+    window.clearAllData = clearAllData;
+  </script>
+</body>
+</html>
