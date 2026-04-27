@@ -467,7 +467,10 @@
 
     sendBtn.addEventListener('click', sendMessage);
     chatInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') sendMessage();
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        sendMessage();
+      }
     });
 
     refreshModelBadge();

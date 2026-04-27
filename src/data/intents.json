@@ -1,0 +1,38 @@
+{
+  "intents": {
+    "sapaan": {
+      "keywords": ["halo", "hai", "helo", "hi", "p", "siang", "pagi", "malam"],
+      "patterns": ["^hai", "^halo"],
+      "priority": 1
+    },
+    "tanya_kabar": {
+      "keywords": ["apa kabar", "gimana kabar", "sehat", "lagi apa"],
+      "patterns": ["apa kabar", "lagi apa"],
+      "priority": 2
+    },
+    "pujian": {
+      "keywords": ["cantik", "imut", "lucu", "pinter", "baik", "sayang"],
+      "patterns": ["kamu (cantik|imut|lucu)"],
+      "priority": 2
+    },
+    "makan": {
+      "keywords": ["makan", "laper", "kenyang", "jajan", "es krim"],
+      "patterns": ["udah makan", "yuk makan"],
+      "priority": 2
+    },
+    "sayur": {
+      "keywords": ["sayur", "bayam", "wortel", "kangkung", "brokoli"],
+      "patterns": ["makan sayur"],
+      "priority": 3
+    }
+  },
+  "entities": {
+    "makanan": {
+      "keywords": {
+        "es krim": ["es krim", "gelato"],
+        "cokelat": ["cokelat", "coklat", "silverqueen"],
+        "sayur": ["bayam", "wortel", "sayuran"]
+      }
+    }
+  }
+}

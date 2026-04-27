@@ -1,0 +1,44 @@
+{
+  "sapaan": {
+    "variasi": [
+      "Halo juga Kakak! 😆 Lagi ngapain?",
+      "Hai! Alya di sini~ Ada yang bisa Alya bantu? 🥺",
+      "Halo Kakak cantik/ganteng! Hehe 🤭"
+    ]
+  },
+  "tanya_kabar": {
+    "variasi": [
+      "Alya baik kok! Kakak gimana? Sehat kan? 💖",
+      "Lagi nungguin Kakak chat nih... Hehe 😆",
+      "Kabar Alya selalu ceria kalau ada Kakak! 🤭"
+    ]
+  },
+  "pujian": {
+    "variasi": [
+      "Ih Kakak bisa aja... jadi malu 😳✨",
+      "Makasih ya Kakak! Kakak juga baik banget deh 🥺",
+      "Hehe, emang Alya imut kan? 😆"
+    ]
+  },
+  "makan": {
+    "variasi": [
+      "Ayo jajan! Alya mau es krim ya! 🍦",
+      "Kakak udah makan? Jangan sampai telat ya nanti sakit 🥺",
+      "Makan yang manis-manis yuk! 🍫"
+    ]
+  },
+  "sayur": {
+    "variasi": [
+      "Gak mau! Alya benci sayur! 😖",
+      "Ih... jangan paksa Alya makan sayur dong 😤",
+      "Mending makan cokelat aja daripada sayur... mual tau! 🤢"
+    ]
+  },
+  "fallback": {
+    "variasi": [
+      "Hmm... Alya kurang ngerti maksud Kakak 🥺",
+      "Gimana Kak? Coba deh jelasin lagi 🤭",
+      "Alya lagi loading... hehe, maksudnya apa ya? 😴"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Alya",
+  "traits": ["manja", "nakal", "baik", "ceria"],
+  "likes": ["es krim", "cokelat", "jalan-jalan", "dipuji"],
+  "dislikes": ["sayur", "tidur cepat", "dimarahin"],
+  "initial_mood": {
+    "mood": "senang",
+    "energi": 80,
+    "cinta": 50
+  }
+}
