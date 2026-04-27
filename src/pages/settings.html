@@ -13,8 +13,8 @@
       --danger:#ff5b5b;--success:#2ee6a6;--warn:#ffd166;--r:14px;
     }
     body{font-family:'Nunito',sans-serif;background:radial-gradient(circle at top,#221137 0%,#130b1f 45%,#0b0713 100%);color:var(--text);min-height:100vh;min-height:100dvh}
-    .topbar{position:sticky;top:0;z-index:10;background:rgba(15,10,26,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--glass-b);padding:14px 24px;display:flex;align-items:center;gap:14px}
-    .topbar a{color:var(--pink);text-decoration:none;font-size:14px}
+    .topbar{position:sticky;top:0;z-index:10;background:rgba(15,10,26,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--glass-b);padding:calc(14px + env(safe-area-inset-top)) 24px 14px 24px;display:flex;align-items:center;gap:14px}
+    .topbar a{color:var(--pink);text-decoration:none;font-size:14px;display:flex;align-items:center}
     .topbar h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--pink),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     .container{max-width:920px;margin:0 auto;padding:22px;transition:all .3s}
     .hero{padding:20px 0 14px}
