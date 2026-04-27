@@ -114,19 +114,19 @@ const server = createServer(async (req, res) => {
 
   try {
     // ═══ PAGES ═══
-    if (req.method === 'GET' && (path === '/' || path === '/index.html')) {
+    if (req.method === 'GET' && (path === '/' || path === '/index.html' || path === '/chat.html')) {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(readPage('chat.html'));
       return;
     }
 
-    if (req.method === 'GET' && path === '/settings') {
+    if (req.method === 'GET' && (path === '/settings' || path === '/settings.html' || path === '/pages/settings.html')) {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(readPage('settings.html'));
       return;
     }
 
-    if (req.method === 'GET' && path === '/admin-push') {
+    if (req.method === 'GET' && (path === '/admin-push' || path === '/admin-push.html')) {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(readPage('admin-push.html'));
       return;
